@@ -45,6 +45,7 @@ export class BlockTracker extends EventEmitter {
         this.emit('transactions', {
           masterBlock,
           transactions: blockTransactions,
+          workchain,
         })
       }
     );
