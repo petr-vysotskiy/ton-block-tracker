@@ -8,7 +8,7 @@ const getBlockKey = (blockId: liteServer_masterchainInfo) =>
 
 export class BlockTracker extends EventEmitter {
   private readonly shardsCursors = new Map<string, number>();
-  private importTransactionsQueue = new Queue({ concurrency: 1 });
+  private importTransactionsQueue = new Queue({ concurrency: 1, autostart: true });
   private interval: NodeJS.Timeout | undefined
   private started = false
 
