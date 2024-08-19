@@ -11,6 +11,7 @@ export class BlockTracker extends EventEmitter {
   private importTransactionsQueue = new Queue({ concurrency: 1, autostart: true });
   private interval: NodeJS.Timeout | undefined
   private started = false
+  private lastMasterChainInfo: liteServer_masterchainInfo | null = null
 
   constructor(private readonly client: LiteClient) {
     super();
@@ -30,6 +31,10 @@ export class BlockTracker extends EventEmitter {
     clearInterval(this.interval);
     this.interval = undefined;
     this.importTransactionsQueue.end();
+  }
+
+  getLatestMasterBlock() {
+    return this.lastMasterChainInfo;
   }
 
   async importBlockTransactions(masterBlock: liteServer_masterchainInfo, workchain: number, shard: bigint, seqno: number) {
@@ -91,6 +96,7 @@ export class BlockTracker extends EventEmitter {
 
   async #tick() {
     const masterBlock = await this.client.getMasterchainInfo();
+    this.lastMasterChainInfo = masterBlock;
     const masterBlockKey = getBlockKey(masterBlock);
 
     const previousSeqno = this.shardsCursors.get(masterBlockKey);
